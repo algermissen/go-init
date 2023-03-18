@@ -26,21 +26,31 @@ func main() {
 		Args: []string{"hello"},
 	}
 
+	must(os.Setenv("HOME", "/home"),"set HOME")
+	must(os.Setenv("PATH", "/bin:/sbin"),"set PATH")
+
 	fmt.Printf("Mounting devices...\n")
-	must(syscall.Mount("proc", "proc", "proc", 0, ""), "Unable to mount proc")
-	must(syscall.Mount("sys", "sys", "sysfs", 0, ""), "Unable to mount sys")
-	must(syscall.Mount("dev", "dev", "devtmpfs", 0, ""), "Unable to mount dev")
+	must(syscall.Mount("proc", "proc", "proc", 0, ""), "mount proc")
+	must(syscall.Mount("sys", "sys", "sysfs", 0, ""), "mount sys")
+	must(syscall.Mount("dev", "dev", "devtmpfs", 0, ""), "mount dev")
 
-	must(syscall.Mkdir("/dev/pts", 0600), "Unable to create /dev/pts")
-	must(syscall.Mount("dev/pts", "dev/pts", "devpts", 0, ""), "Unable to mount devpts")
+	must(syscall.Mkdir("/dev/pts", 0600), "create /dev/pts")
+	must(syscall.Mount("dev/pts", "dev/pts", "devpts", 0, ""), "mount devpts")
 
-	must(syscall.Mount("tmpfs", "/tmp", "tmpfs", 0, ""), "Unable to mount tmpfs")
+	must(syscall.Mount("tmpfs", "/tmp", "tmpfs", 0, ""), "mount tmpfs")
 
 	fmt.Printf("Devices mounted\n")
 
 
+	//fmt.Printf("Initializing network...\n")
+	//must(configureEthernet(),"Unable to configure ethernet")
+	//fmt.Printf("network initialzized\n")
 	fmt.Printf("Initializing network...\n")
-	must(configureEthernet(),"Unable to configure ethernet")
+
+	must(exec.Command("ifconfig","eth0","10.0.2.15").Run(),"configure eth0")
+	must(exec.Command("route","add","default","gw","10.0.2.2").Run(),"add default route")
+
+
 	fmt.Printf("network initialzized\n")
 
 	var err error
@@ -125,7 +135,7 @@ func must(err error, msg string) {
 	if err == nil {
 		return
 	}
-	panic(fmt.Sprintf("%s: %v", msg, err))
+	panic(fmt.Sprintf("Unable to %s: %v", msg, err))
 }
 
 type socketAddrRequest struct {

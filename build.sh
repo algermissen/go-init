@@ -16,6 +16,9 @@ fi
 
 mkdir -p "$ROOT"/{etc,tmp,proc,sys,dev,home,mnt,root,usr/{bin,sbin,lib},var} && chmod a+rwxt "$ROOT"/tmp
 
+cp -r /opt/devel/busybox/foo/bin "$ROOT"
+cp -r /opt/devel/busybox/foo/sbin "$ROOT"
+
 cat > "$ROOT"/etc/passwd << 'EOF' &&
 root::0:0:root:/root:/bin/sh
 guest:x:500:500:guest:/home/guest:/bin/sh
