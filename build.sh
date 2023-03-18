@@ -28,3 +28,14 @@ guest:x:500:
 EOF
 
 echo "nameserver 8.8.8.8" > "$ROOT"/etc/resolv.conf
+
+
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-extldflags '-static'" -o "$ROOT"/init main.go
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-extldflags '-static'" -o "$ROOT"/hello hello.go
+
+cd "$ROOT"
+
+find . | cpio -o -H newc | gzip > ../root.cpio.gz
+cd ..
+echo "root.cpio.gz created"
+

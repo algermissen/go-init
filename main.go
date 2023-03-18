@@ -38,17 +38,10 @@ func main() {
 
 	fmt.Printf("Devices mounted\n")
 
-	must(configureEthernet())
 
 	fmt.Printf("Initializing network...\n")
-
-	/*
-	   - initialize network card
-	   - set ip routing
-	   - determine or set host IP (DHCP or static)
-
-	   os.Exec("ifup","eth0"....)
-	*/
+	must(configureEthernet(),"Unable to configure ethernet")
+	fmt.Printf("network initialzized\n")
 
 	var err error
 	if true {
